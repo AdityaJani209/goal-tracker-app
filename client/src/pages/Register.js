@@ -173,10 +173,10 @@ const Register = () => {
               })}
             />            <label htmlFor="agree-terms" className="ml-2 block text-sm text-gray-900">
               I agree to the{' '}
-              <button 
+              <button
                 type="button"
                 className="text-primary-600 hover:text-primary-500 bg-transparent border-none cursor-pointer"
-                onClick={() => {/* TODO: Show terms modal */}}
+                onClick={() => {/* TODO: Show terms modal */ }}
               >
                 Terms and Conditions
               </button>

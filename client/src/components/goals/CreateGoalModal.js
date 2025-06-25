@@ -23,11 +23,11 @@ const CreateGoalModal = ({ isOpen, onClose, onGoalCreated }) => {
     control,
     name: 'milestones'
   });
-
   const onSubmit = async (data) => {
     const goalData = {
       ...data,
       tags,
+      status: 'not-started', // Explicitly set default status
       targetDate: new Date(data.targetDate).toISOString()
     };
 
@@ -60,13 +60,11 @@ const CreateGoalModal = ({ isOpen, onClose, onGoalCreated }) => {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose}></div>
-
-        <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose}></div>        <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6">
           <div className="absolute top-0 right-0 pt-4 pr-4">
             <button
               type="button"
-              className="bg-white rounded-md text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              className="bg-white dark:bg-gray-800 rounded-md text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               onClick={onClose}
             >
               <X className="h-6 w-6" />
@@ -75,7 +73,7 @@ const CreateGoalModal = ({ isOpen, onClose, onGoalCreated }) => {
 
           <div className="sm:flex sm:items-start">
             <div className="w-full">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-6">
+              <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-6">
                 Create New Goal
               </h3>
 
@@ -193,16 +191,15 @@ const CreateGoalModal = ({ isOpen, onClose, onGoalCreated }) => {
                   </div>
                   {tags.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-2">
-                      {tags.map((tag, index) => (
-                        <span
+                      {tags.map((tag, index) => (                        <span
                           key={index}
-                          className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-800"
+                          className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 dark:bg-primary-800 text-primary-800 dark:text-primary-100"
                         >
                           #{tag}
                           <button
                             type="button"
                             onClick={() => removeTag(tag)}
-                            className="ml-2 text-primary-600 hover:text-primary-800"
+                            className="ml-2 text-primary-600 dark:text-primary-300 hover:text-primary-800 dark:hover:text-primary-100"
                           >
                             <X className="h-3 w-3" />
                           </button>
@@ -225,9 +222,8 @@ const CreateGoalModal = ({ isOpen, onClose, onGoalCreated }) => {
                       Add Milestone
                     </button>
                   </div>
-                  
-                  {fields.length > 0 && (
-                    <div className="space-y-3 max-h-48 overflow-y-auto border border-gray-200 rounded-md p-3">
+                    {fields.length > 0 && (
+                    <div className="space-y-3 max-h-48 overflow-y-auto border border-gray-200 dark:border-gray-600 rounded-md p-3 bg-gray-50 dark:bg-gray-700">
                       {fields.map((field, index) => (
                         <div key={field.id} className="flex items-start space-x-3">
                           <div className="flex-1 space-y-2">
@@ -261,10 +257,8 @@ const CreateGoalModal = ({ isOpen, onClose, onGoalCreated }) => {
                       ))}
                     </div>
                   )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                </div>                {/* Actions */}
+                <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-600">
                   <button
                     type="button"
                     onClick={onClose}

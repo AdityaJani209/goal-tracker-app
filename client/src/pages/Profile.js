@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { authAPI } from '../services/api';
 import { User, Mail, Settings, Lock, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [activeTab, setActiveTab] = useState('profile');
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -21,10 +23,9 @@ const Profile = () => {
   });
 
   const { register: registerPassword, handleSubmit: handlePasswordSubmit, formState: { errors: passwordErrors }, reset: resetPassword } = useForm();
-
   const { register: registerPreferences, handleSubmit: handlePreferencesSubmit } = useForm({
     defaultValues: {
-      theme: user?.preferences?.theme || 'light',
+      theme: theme || 'light',
       emailNotifications: user?.preferences?.notifications?.email || true,
       reminderNotifications: user?.preferences?.notifications?.reminders || true
     }
@@ -58,10 +59,13 @@ const Profile = () => {
       setLoading(false);
     }
   };
-
   const onPreferencesSubmit = async (data) => {
     try {
       setLoading(true);
+      
+      // Update theme immediately
+      setTheme(data.theme);
+      
       const preferences = {
         theme: data.theme,
         notifications: {
@@ -84,13 +88,12 @@ const Profile = () => {
     { id: 'security', name: 'Security', icon: Lock },
     { id: 'preferences', name: 'Preferences', icon: Settings }
   ];
-
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Profile Settings</h1>
-        <p className="text-gray-600">Manage your account settings and preferences</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Profile Settings</h1>
+        <p className="text-gray-600 dark:text-gray-300">Manage your account settings and preferences</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -103,11 +106,10 @@ const Profile = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md ${
-                    activeTab === tab.id
-                      ? 'bg-primary-100 text-primary-700'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
+                  className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === tab.id
+                      ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
+                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
+                    }`}
                 >
                   <Icon className="mr-3 h-5 w-5" />
                   {tab.name}
@@ -119,12 +121,12 @@ const Profile = () => {
 
         {/* Content */}
         <div className="lg:col-span-3">
-          <div className="card p-6">
+          <div className="card p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
             {/* Profile Tab */}
             {activeTab === 'profile' && (
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-6">Profile Information</h3>
-                
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Profile Information</h3>
+
                 <form onSubmit={handleProfileSubmit(onProfileSubmit)} className="space-y-6">
                   {/* Avatar */}
                   <div>
@@ -209,13 +211,11 @@ const Profile = () => {
                   </div>
                 </form>
               </div>
-            )}
-
-            {/* Security Tab */}
+            )}            {/* Security Tab */}
             {activeTab === 'security' && (
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-6">Change Password</h3>
-                
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Change Password</h3>
+
                 <form onSubmit={handlePasswordSubmit(onPasswordSubmit)} className="space-y-6">
                   {/* Current Password */}
                   <div>
@@ -294,13 +294,11 @@ const Profile = () => {
                   </div>
                 </form>
               </div>
-            )}
-
-            {/* Preferences Tab */}
+            )}            {/* Preferences Tab */}
             {activeTab === 'preferences' && (
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-6">Preferences</h3>
-                
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-6">Preferences</h3>
+
                 <form onSubmit={handlePreferencesSubmit(onPreferencesSubmit)} className="space-y-6">
                   {/* Theme */}
                   <div>
@@ -310,19 +308,19 @@ const Profile = () => {
                         <input
                           type="radio"
                           value="light"
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700"
                           {...registerPreferences('theme')}
                         />
-                        <span className="ml-2 text-sm text-gray-700">Light</span>
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Light</span>
                       </label>
                       <label className="flex items-center">
                         <input
                           type="radio"
                           value="dark"
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700"
                           {...registerPreferences('theme')}
                         />
-                        <span className="ml-2 text-sm text-gray-700">Dark</span>
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Dark</span>
                       </label>
                     </div>
                   </div>
@@ -334,18 +332,18 @@ const Profile = () => {
                       <label className="flex items-center">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
                           {...registerPreferences('emailNotifications')}
                         />
-                        <span className="ml-2 text-sm text-gray-700">Email notifications</span>
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Email notifications</span>
                       </label>
                       <label className="flex items-center">
                         <input
                           type="checkbox"
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
                           {...registerPreferences('reminderNotifications')}
                         />
-                        <span className="ml-2 text-sm text-gray-700">Goal reminders</span>
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Goal reminders</span>
                       </label>
                     </div>
                   </div>

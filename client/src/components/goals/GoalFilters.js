@@ -46,10 +46,9 @@ const GoalFilters = ({ filters, onFilterChange }) => {
   };
 
   const hasActiveFilters = Object.values(filters).some(filter => filter !== '');
-
   return (
     <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
-      <div className="flex items-center text-sm text-gray-700">
+      <div className="flex items-center text-sm text-gray-700 dark:text-gray-300">
         <Filter className="h-4 w-4 mr-2" />
         Filters:
       </div>
@@ -58,7 +57,7 @@ const GoalFilters = ({ filters, onFilterChange }) => {
       <select
         value={filters.category}
         onChange={(e) => handleFilterChange('category', e.target.value)}
-        className="block w-full sm:w-auto rounded-md border-gray-300 py-2 pl-3 pr-10 text-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+        className="block w-full sm:w-auto rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white py-2 pl-3 pr-10 text-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
       >
         {categories.map((category) => (
           <option key={category.value} value={category.value}>
@@ -71,7 +70,7 @@ const GoalFilters = ({ filters, onFilterChange }) => {
       <select
         value={filters.status}
         onChange={(e) => handleFilterChange('status', e.target.value)}
-        className="block w-full sm:w-auto rounded-md border-gray-300 py-2 pl-3 pr-10 text-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+        className="block w-full sm:w-auto rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white py-2 pl-3 pr-10 text-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
       >
         {statuses.map((status) => (
           <option key={status.value} value={status.value}>
@@ -84,7 +83,7 @@ const GoalFilters = ({ filters, onFilterChange }) => {
       <select
         value={filters.priority}
         onChange={(e) => handleFilterChange('priority', e.target.value)}
-        className="block w-full sm:w-auto rounded-md border-gray-300 py-2 pl-3 pr-10 text-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+        className="block w-full sm:w-auto rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white py-2 pl-3 pr-10 text-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
       >
         {priorities.map((priority) => (
           <option key={priority.value} value={priority.value}>
@@ -97,7 +96,7 @@ const GoalFilters = ({ filters, onFilterChange }) => {
       {hasActiveFilters && (
         <button
           onClick={clearFilters}
-          className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
         >
           <X className="h-4 w-4 mr-1" />
           Clear

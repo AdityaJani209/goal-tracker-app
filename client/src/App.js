@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { GoalProvider } from './contexts/GoalContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import Navbar from './components/layout/Navbar';
 import Sidebar from './components/layout/Sidebar';
@@ -16,10 +17,8 @@ import Analytics from './pages/Analytics';
 import { useAuth } from './contexts/AuthContext';
 
 const AppContent = () => {
-    const { isAuthenticated } = useAuth();
-
-    return (
-        <div className="min-h-screen bg-gray-50">
+    const { isAuthenticated } = useAuth();    return (
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
             <Toaster position="top-right" />
 
             {isAuthenticated ? (
@@ -73,13 +72,15 @@ const AppContent = () => {
 
 function App() {
     return (
-        <AuthProvider>
-            <GoalProvider>
-                <Router>
-                    <AppContent />
-                </Router>
-            </GoalProvider>
-        </AuthProvider>
+        <ThemeProvider>
+            <AuthProvider>
+                <GoalProvider>
+                    <Router>
+                        <AppContent />
+                    </Router>
+                </GoalProvider>
+            </AuthProvider>
+        </ThemeProvider>
     );
 }
 

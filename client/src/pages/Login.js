@@ -116,10 +116,10 @@ const Login = () => {
                 Remember me
               </label>
             </div>            <div className="text-sm">
-              <button 
+              <button
                 type="button"
                 className="font-medium text-primary-600 hover:text-primary-500 bg-transparent border-none cursor-pointer"
-                onClick={() => {/* TODO: Implement forgot password */}}
+                onClick={() => {/* TODO: Implement forgot password */ }}
               >
                 Forgot your password?
               </button>

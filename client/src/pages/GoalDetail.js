@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGoals } from '../contexts/GoalContext';
+import EditGoalModal from '../components/goals/EditGoalModal';
 import {
   Calendar,
   Edit,
@@ -26,9 +27,9 @@ const GoalDetail = () => {
     addNote,
     loading
   } = useGoals();
-
   const [showAddMilestone, setShowAddMilestone] = useState(false);
   const [showAddNote, setShowAddNote] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [milestoneForm, setMilestoneForm] = useState({ title: '', description: '', targetDate: '' });
   const [noteForm, setNoteForm] = useState({ content: '' });
 
@@ -76,13 +77,19 @@ const GoalDetail = () => {
       setShowAddNote(false);
     }
   };
-
   const handleDeleteGoal = async () => {
     if (window.confirm('Are you sure you want to delete this goal? This action cannot be undone.')) {
       const result = await deleteGoal(id);
       if (result.success) {
         navigate('/goals');
       }
+    }
+  };
+
+  const handleGoalUpdated = () => {
+    setShowEditModal(false);
+    if (id) {
+      fetchGoal(id); // Refresh goal data
     }
   };
 
@@ -121,19 +128,16 @@ const GoalDetail = () => {
         <div className="flex items-center space-x-4">
           <button
             onClick={() => navigate('/goals')}
-            className="p-2 text-gray-400 hover:text-gray-600 rounded-md hover:bg-gray-100"
+            className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">{selectedGoal.title}</h1>
-            <p className="text-gray-600 capitalize">{selectedGoal.category}</p>
+          <div>            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{selectedGoal.title}</h1>
+            <p className="text-gray-600 dark:text-gray-400 capitalize">{selectedGoal.category}</p>
           </div>
-        </div>
-
-        <div className="flex items-center space-x-3">
+        </div>        <div className="flex items-center space-x-3">
           <button
-            onClick={() => navigate(`/goals/${id}/edit`)}
+            onClick={() => setShowEditModal(true)}
             className="btn-secondary"
           >
             <Edit className="h-4 w-4 mr-2" />
@@ -153,34 +157,31 @@ const GoalDetail = () => {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Goal Overview */}
-          <div className="card p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Overview</h2>
+          <div className="card p-6">            <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Overview</h2>
 
             {selectedGoal.description && (
               <div className="mb-6">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Description</h3>
-                <p className="text-gray-600">{selectedGoal.description}</p>
+                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</h3>
+                <p className="text-gray-600 dark:text-gray-400">{selectedGoal.description}</p>
               </div>
             )}
 
             {/* Progress */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-gray-700">Progress</h3>
-                <span className="text-sm font-medium text-gray-900">{selectedGoal.progress}%</span>
+                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Progress</h3>
+                <span className="text-sm font-medium text-gray-900 dark:text-white">{selectedGoal.progress}%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
+              <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3">
                 <div
                   className={`h-3 rounded-full transition-all duration-300 ${selectedGoal.progress === 100 ? 'bg-success-600' : 'bg-primary-600'
                     }`}
                   style={{ width: `${selectedGoal.progress}%` }}
                 ></div>
               </div>
-            </div>
-
-            {/* Status */}
+            </div>            {/* Status */}
             <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Status</h3>
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</h3>
               <div className="flex items-center space-x-2">
                 <select
                   value={selectedGoal.status}
@@ -199,8 +200,7 @@ const GoalDetail = () => {
 
           {/* Milestones */}
           <div className="card p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-medium text-gray-900">
+            <div className="flex items-center justify-between mb-4">              <h2 className="text-lg font-medium text-gray-900 dark:text-white">
                 Milestones ({completedMilestones}/{totalMilestones})
               </h2>
               <button
@@ -214,7 +214,7 @@ const GoalDetail = () => {
 
             {/* Add Milestone Form */}
             {showAddMilestone && (
-              <form onSubmit={handleAddMilestone} className="mb-6 p-4 border border-gray-200 rounded-lg">
+              <form onSubmit={handleAddMilestone} className="mb-6 p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700">
                 <div className="space-y-3">
                   <input
                     type="text"
@@ -256,8 +256,7 @@ const GoalDetail = () => {
             {/* Milestones List */}
             {selectedGoal.milestones && selectedGoal.milestones.length > 0 ? (
               <div className="space-y-3">
-                {selectedGoal.milestones.map((milestone) => (
-                  <div key={milestone._id} className="flex items-start space-x-3 p-3 border border-gray-200 rounded-lg">
+                {selectedGoal.milestones.map((milestone) => (                  <div key={milestone._id} className="flex items-start space-x-3 p-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700">
                     <button
                       onClick={() => handleMilestoneToggle(milestone._id, milestone.completed)}
                       className="mt-1"
@@ -265,20 +264,20 @@ const GoalDetail = () => {
                       {milestone.completed ? (
                         <CheckCircle className="h-5 w-5 text-success-600" />
                       ) : (
-                        <Circle className="h-5 w-5 text-gray-400" />
+                        <Circle className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                       )}
                     </button>
                     <div className="flex-1">
-                      <h4 className={`font-medium ${milestone.completed ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                      <h4 className={`font-medium ${milestone.completed ? 'text-gray-500 dark:text-gray-400 line-through' : 'text-gray-900 dark:text-white'}`}>
                         {milestone.title}
                       </h4>
                       {milestone.description && (
-                        <p className={`text-sm mt-1 ${milestone.completed ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <p className={`text-sm mt-1 ${milestone.completed ? 'text-gray-400 dark:text-gray-500' : 'text-gray-600 dark:text-gray-300'}`}>
                           {milestone.description}
                         </p>
                       )}
                       {milestone.targetDate && (
-                        <div className="flex items-center mt-2 text-xs text-gray-500">
+                        <div className="flex items-center mt-2 text-xs text-gray-500 dark:text-gray-400">
                           <Calendar className="h-3 w-3 mr-1" />
                           Due {format(new Date(milestone.targetDate), 'MMM d, yyyy')}
                         </div>
@@ -294,14 +293,14 @@ const GoalDetail = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500 text-center py-6">No milestones yet. Add one to break down your goal!</p>
+              <p className="text-gray-500 dark:text-gray-400 text-center py-6">No milestones yet. Add one to break down your goal!</p>
             )}
           </div>
 
           {/* Notes */}
           <div className="card p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-medium text-gray-900">Notes</h2>
+              <h2 className="text-lg font-medium text-gray-900 dark:text-white">Notes</h2>
               <button
                 onClick={() => setShowAddNote(true)}
                 className="btn-secondary btn-sm"
@@ -313,7 +312,7 @@ const GoalDetail = () => {
 
             {/* Add Note Form */}
             {showAddNote && (
-              <form onSubmit={handleAddNote} className="mb-6 p-4 border border-gray-200 rounded-lg">
+              <form onSubmit={handleAddNote} className="mb-6 p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700">
                 <textarea
                   placeholder="Add a note..."
                   value={noteForm.content}
@@ -340,13 +339,12 @@ const GoalDetail = () => {
             {/* Notes List */}
             {selectedGoal.notes && selectedGoal.notes.length > 0 ? (
               <div className="space-y-4">
-                {selectedGoal.notes.map((note) => (
-                  <div key={note._id} className="border border-gray-200 rounded-lg p-4">
+                {selectedGoal.notes.map((note) => (                  <div key={note._id} className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-gray-50 dark:bg-gray-700">
                     <div className="flex items-start space-x-3">
-                      <MessageCircle className="h-5 w-5 text-gray-400 mt-1" />
+                      <MessageCircle className="h-5 w-5 text-gray-400 dark:text-gray-500 mt-1" />
                       <div className="flex-1">
-                        <p className="text-gray-900">{note.content}</p>
-                        <p className="text-xs text-gray-500 mt-2">
+                        <p className="text-gray-900 dark:text-white">{note.content}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                           {format(new Date(note.createdAt), 'MMM d, yyyy \'at\' h:mm a')}
                         </p>
                       </div>
@@ -355,7 +353,7 @@ const GoalDetail = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500 text-center py-6">No notes yet. Add one to track your thoughts!</p>
+              <p className="text-gray-500 dark:text-gray-400 text-center py-6">No notes yet. Add one to track your thoughts!</p>
             )}
           </div>
         </div>
@@ -363,25 +361,23 @@ const GoalDetail = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Goal Info */}
-          <div className="card p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Goal Info</h3>
+          <div className="card p-6">            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Goal Info</h3>
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-gray-700">Priority</label>
-                <p className="text-gray-900 capitalize">{selectedGoal.priority}</p>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Priority</label>
+                <p className="text-gray-900 dark:text-white capitalize">{selectedGoal.priority}</p>
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-700">Target Date</label>
-                <div className="flex items-center text-gray-900">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Target Date</label>
+                <div className="flex items-center text-gray-900 dark:text-white">
                   <Calendar className="h-4 w-4 mr-2" />
                   {format(new Date(selectedGoal.targetDate), 'MMMM d, yyyy')}
                 </div>
               </div>
 
-              <div>
-                <label className="text-sm font-medium text-gray-700">Created</label>
-                <div className="flex items-center text-gray-900">
+              <div>                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Created</label>
+                <div className="flex items-center text-gray-900 dark:text-white">
                   <Clock className="h-4 w-4 mr-2" />
                   {format(new Date(selectedGoal.createdAt), 'MMMM d, yyyy')}
                 </div>
@@ -389,7 +385,7 @@ const GoalDetail = () => {
 
               {selectedGoal.completedAt && (
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Completed</label>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Completed</label>
                   <div className="flex items-center text-success-600">
                     <CheckCircle className="h-4 w-4 mr-2" />
                     {format(new Date(selectedGoal.completedAt), 'MMMM d, yyyy')}
@@ -401,22 +397,30 @@ const GoalDetail = () => {
 
           {/* Tags */}
           {selectedGoal.tags && selectedGoal.tags.length > 0 && (
-            <div className="card p-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Tags</h3>
+            <div className="card p-6">              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Tags</h3>
               <div className="flex flex-wrap gap-2">
                 {selectedGoal.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-800"
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 dark:bg-primary-800 text-primary-800 dark:text-primary-100"
                   >
                     #{tag}
                   </span>
                 ))}
               </div>
-            </div>
-          )}
+            </div>          )}
         </div>
       </div>
+
+      {/* Edit Goal Modal */}
+      {showEditModal && selectedGoal && (
+        <EditGoalModal
+          isOpen={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          goal={selectedGoal}
+          onGoalUpdated={handleGoalUpdated}
+        />
+      )}
     </div>
   );
 };
